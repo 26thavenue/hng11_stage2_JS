@@ -1,4 +1,4 @@
-import express ,{type Application} from 'express';
+import express ,{type Application, type Request, type NextFunction, type Response} from 'express';
 import morgan from 'morgan'
 import dotenv from "dotenv"
 
@@ -38,6 +38,11 @@ app.get('/', (req, res) => {
 
 app.get('/health', (req, res) => {
     res.send('Health Check');
+});
+
+
+app.use((req: Request, res: Response, next: NextFunction) => {
+    res.status(404).json({ error: 'Not Found' });
 });
 
 

@@ -1,65 +1,42 @@
-// import jwt from 'jsonwebtoken';
-// import { TokenService } from '../service/token.service'
-// import { expect, test, describe, mock, it,  beforeEach } from "bun:test";
+import jwt from 'jsonwebtoken';
+import { v4 as uuidv4 } from 'uuid';
+import {describe, it , test,beforeEach, expect} from '@jest/globals'
+
+import * as Test from "bun:test"
+
+import { TokenService } from '../service/token.service'
 
 
-// let tokenService: TokenService;
+let tokenService: TokenService;
 
-//   beforeEach(() => {
-//     tokenService = new TokenService();
-//   })
+  beforeEach(() => {
+    tokenService = new TokenService();
+  })
 
 
-// describe('Access Token Generation', () => {
+describe('Token Generation', () => {
+  it('token expires at the correct time', () => {
+    const user = { id: uuidv4(), email: 'test@example.com' };
+    const token = TokenService.generateAccessToken(user.id, '1h')
+    const decoded = jwt.decode(token) as jwt.JwtPayload;
 
-  
-//    test('should generate a token that expires at the correct time', () => {
-//       const userId = "1";
-//       const expirationTime = '1h';
-//       const token = TokenService.generateAccessToken(userId, expirationTime);
-//       const decoded = jwt.decode(token) as jwt.JwtPayload;
-      
-//       const currentTime = Math.floor(Date.now() / 1000);
-//       const expectedExpirationTime = currentTime + 3600; // 1 hour in seconds
+    expect(decoded.exp).toBeDefined();
+    expect(decoded.exp! - decoded.iat!).toBe(3600); // Assuming 1 hour expiration
+  });
 
-//       expect(decoded.exp).toBeDefined();
-//       expect(decoded.exp).toBeGreaterThan(currentTime);
-//       expect(decoded.exp).toBeLessThanOrEqual(expectedExpirationTime + 1); // Allow 1 second tolerance
-//     });
+  it('token contains correct user details', () => {
+    const user = { id: uuidv4(), email: 'test@example.com' };
+    const token = TokenService.generateAccessToken(user.id, '1h')
+    const decoded = jwt.decode(token) as jwt.JwtPayload;
+  expect(decoded.exp).toBeDefined();
+    expect(decoded.exp! - decoded.iat!).toBe(3600); // Assuming 1 hour expiration
+  });
 
-//   test('should contain correct user details in the token', () => {
-//       const userId = "1";
-//       const expirationTime = '1h';
-//       const token = TokenService.generateAccessToken(userId, expirationTime);
-//       const decoded = jwt.decode(token) as jwt.JwtPayload;
+  it('token contains correct user details', () => {
+    const user = { id: uuidv4(), email: 'test@example.com' };
+    const token = TokenService.generateAccessToken(user.id, '1h')
+    const decoded = jwt.decode(token) as jwt.JwtPayload;
 
-//       expect(decoded.userId).toBe(userId);
-//     });
-// });
-
-// describe('Refresh Token Generation', () => {
-
-//     test('should generate a token that expires at the correct time', () => {
-//       const userId = "1";
-//       const expirationTime = '7d';
-//       const token = TokenService.generateRefreshToken(userId, expirationTime);
-//       const decoded = jwt.decode(token) as jwt.JwtPayload;
-      
-//       const currentTime = Math.floor(Date.now() / 1000);
-//       const expectedExpirationTime = currentTime + 7 * 24 * 3600; // 7 days in seconds
-
-//       expect(decoded.exp).toBeDefined();
-//       expect(decoded.exp).toBeGreaterThan(currentTime);
-//       expect(decoded.exp).toBeLessThanOrEqual(expectedExpirationTime + 1); // Allow 1 second tolerance
-//     });
-
-//     test('should contain correct user details in the token', () => {
-//       const userId = "1";
-//       const expirationTime = '1h';
-//       const token = TokenService.generateAccessToken(userId, expirationTime);
-//       const decoded = jwt.decode(token) as jwt.JwtPayload;
-
-//       expect(decoded.userId).toBe(userId);
-//     });
-
-//   })
+    expect(decoded.userId).toBe(user.id);
+  });
+});

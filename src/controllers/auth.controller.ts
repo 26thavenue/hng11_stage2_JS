@@ -7,6 +7,7 @@ import { ErrorMiddleware } from "../middlewares/error.middleware"
 export const register =  async(req:Request,res: Response) => {
     
     const data = await authService.createUser(req.body)
+    
     if(data instanceof ErrorMiddleware){
         return res.status(data.statusCode).json({status: data.status,message: data.message, statusCode: data.statusCode})
     }
@@ -60,6 +61,6 @@ export const login =  async(req:Request,res: Response) => {
     }
     
 
-    res.status(201).json(response)
+    res.status(200).json(response)
     
 }

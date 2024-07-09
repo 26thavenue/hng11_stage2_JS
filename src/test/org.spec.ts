@@ -1,61 +1,68 @@
-// import { expect, test, describe, mock, beforeEach } from "bun:test";
-// import { createOrg, getAllUsersOrg, getOrgByID, addUsersToOrg } from '../service/org.service'; // adjust the import path as needed
+// import { v4 as uuidv4 } from 'uuid';
+// import { createOrg, getAllUsersOrg, getOrgByID, addUsersToOrg } from '../service/org.service';
 // import { ErrorMiddleware } from "../middlewares/error.middleware";
 
-// // Mock the database
-// const mockDb = {
+// import { beforeEach, describe, it, jest, expect } from '@jest/globals';
+// import { Organisation, User } from '../interfaces';  // Adjust the import path as necessary
+
+// interface MockDb {
 //   organisation: {
-//     create: () => {},
-//     update: () => {},
-//     findMany: () => {},
-//     findFirst: () => {},
-//     findUnique: () => {},
+//     create: jest.Mock;
+//     update: jest.Mock;
+//     findMany: jest.Mock;
+//     findFirst: jest.Mock;
+//     findUnique: jest.Mock;
+//   };
+//   user: {
+//     findUnique: jest.Mock;
+//   };
+// }
+
+// const mockDb:MockDb = {
+//   organisation: {
+//     create: jest.fn(),
+//     update: jest.fn(),
+//     findMany: jest.fn(),
+//     findFirst: jest.fn(),
+//     findUnique: jest.fn(),
 //   },
 //   user: {
-//     findUnique: () => {},
+//     findUnique: jest.fn(),
 //   },
 // };
 
-// mock.module("../utils/util", () => ({
+// jest.mock("../utils/util", () => ({
 //   db: mockDb
 // }));
 
 // describe("Organisation functions", () => {
-// //   beforeEach(() => {
-    
-// //     for (const key in mockDb) {
-// //       for (const method in mockDb[key]) {
-// //         mockDb[key][method] = () => {};
-// //       }
-// //     }
-// //   });
+//   beforeEach(() => {
+//     jest.clearAllMocks();
+//   });
 
 //   describe("createOrg", () => {
 //     test("should create an organisation successfully", async () => {
-//       const mockOrg = {
-//             orgId: 'mock-org-id',
-//             name: 'mockorg',
-//             description: 'Mock organization for testing',
-//             createdAt: new Date(),
-//             updatedAt: new Date(),
-//             users: [{ id: 'user1' }]
-//         };
-//       mockDb.organisation.create = () => Promise.resolve(mockOrg);
-//       mockDb.organisation.update = () => Promise.resolve(mockOrg);
-
+//       const mockOrg: Organisation = {
+//         orgId: uuidv4(),
+//         name: 'mockorg',
+//         description: 'Mock organization for testing',
+//         createdAt: new Date(),
+//         updatedAt: new Date(),
+//         users: [{ id: uuidv4() } as User]
+//       };
       
+//        mockDb.organisation.create.mockResolvedValue(mockOrg);
+//       mockDb.organisation.update.mockResolvedValue(mockOrg);
 
-//       const result = await createOrg("Test Org", "user1", "Test Description");
-
-//     //   console.log(result)
+//       const result = await createOrg("Test Org", uuidv4(), "Test Description");
 
 //       expect(result).toEqual(mockOrg);
 //     });
 
 //     test("should handle errors", async () => {
-//       mockDb.organisation.create = () => Promise.reject(new Error("DB Error"));
+//       mockDb.organisation.create.mockRejectedValue(new Error("DB Error"));
 
-//       const result = await createOrg("Test Org", "user1");
+//       const result = await createOrg("Test Org", uuidv4());
 
 //       expect(result).toBeInstanceOf(ErrorMiddleware);
 //       expect((result as ErrorMiddleware).statusCode).toBe(500);
@@ -64,39 +71,35 @@
 
 //   describe("getAllUsersOrg", () => {
 //     test("should return all organisations for a user", async () => {
-//       const mockOrgs = 
-//       [
+//       const mockOrgs: Organisation[] = [
 //         {
-//             orgId: 'mock-org-id',
-//             name: 'mockorg',
-//             description: 'Mock organization for testing',
-//             createdAt: new Date(),
-//             updatedAt: new Date(),
-//             users: [{ id: 'user1' }]
+//           orgId: uuidv4(),
+//           name: 'mockorg',
+//           description: 'Mock organization for testing',
+//           createdAt: new Date(),
+//           updatedAt: new Date(),
+//           users: [{ id: uuidv4() } as User]
 //         },
 //         {
-//             orgId: 'mock-org-id-2',
-//             name: 'mockOrganisation',
-//             description: 'Mock organization for testing 2  ',
-//             createdAt: new Date(),
-//             updatedAt: new Date(),
-//             users: [{ id: 'user1' }]
+//           orgId: uuidv4(),
+//           name: 'mockOrganisation',
+//           description: 'Mock organization for testing 2',
+//           createdAt: new Date(),
+//           updatedAt: new Date(),
+//           users: [{ id: uuidv4() } as User]
 //         }
 //       ];
-//       mockDb.organisation.findMany = () => Promise.resolve(mockOrgs);
+//       mockDb.organisation.findMany.mockResolvedValue(mockOrgs);
 
-//       const result = await getAllUsersOrg("user1");
-
+//       const result = await getAllUsersOrg(uuidv4());
 
 //       expect(result).toEqual(mockOrgs);
 //     });
 
 //     test("should handle errors", async () => {
-//       mockDb.organisation.findMany = () => Promise.reject(new Error("DB Error"));
+//       mockDb.organisation.findMany.mockRejectedValue(new Error("DB Error"));
 
-//       const result = await getAllUsersOrg("user1");
-
-//     //   console.log(result)
+//       const result = await getAllUsersOrg(uuidv4());
 
 //       expect(result).toBeInstanceOf(ErrorMiddleware);
 //       expect((result as ErrorMiddleware).statusCode).toBe(500);
@@ -105,34 +108,34 @@
 
 //   describe("getOrgByID", () => {
 //     test("should return an organisation by ID", async () => {
-//       const mockOrg = {
-//             orgId: 'mock-org-id',
-//             name: 'mockorg',
-//             description: 'Mock organization for testing',
-//             createdAt: new Date(),
-//             updatedAt: new Date(),
-//             users: [{ id: 'user1' }]
-//         };
-//       mockDb.organisation.findFirst = () => Promise.resolve(mockOrg);
+//       const mockOrg: Organisation = {
+//         orgId: uuidv4(),
+//         name: 'mockorg',
+//         description: 'Mock organization for testing',
+//         createdAt: new Date(),
+//         updatedAt: new Date(),
+//         users: [{ id: uuidv4() } as User]
+//       };
+//       mockDb.organisation.findFirst.mockResolvedValue(mockOrg);
 
-//       const result = await getOrgByID("org1", "user1");
+//       const result = await getOrgByID(uuidv4(), uuidv4());
 
 //       expect(result).toEqual(mockOrg);
 //     });
 
 //     test("should return an error if organisation doesn't exist", async () => {
-//       mockDb.organisation.findFirst = () => Promise.resolve(null);
+//       mockDb.organisation.findFirst.mockResolvedValue(null);
 
-//       const result = await getOrgByID("org1", "user1");
+//       const result = await getOrgByID(uuidv4(), uuidv4());
 
 //       expect(result).toBeInstanceOf(ErrorMiddleware);
 //       expect((result as ErrorMiddleware).statusCode).toBe(401);
 //     });
 
 //     test("should handle errors", async () => {
-//       mockDb.organisation.findFirst = () => Promise.reject(new Error("DB Error"));
+//       mockDb.organisation.findFirst.mockRejectedValue(new Error("DB Error"));
 
-//       const result = await getOrgByID("org1", "user1");
+//       const result = await getOrgByID(uuidv4(), uuidv4());
 
 //       expect(result).toBeInstanceOf(ErrorMiddleware);
 //       expect((result as ErrorMiddleware).statusCode).toBe(500);
@@ -140,41 +143,35 @@
 //   });
 
 //   describe("addUsersToOrg", () => {
-//     // test("should add a user to an organisation", async () => {
-//     //   mockDb.user.findUnique = () => Promise.resolve({ id: "user1" });
-//     //   mockDb.organisation.findUnique = () => Promise.resolve({ orgId: "org1" });
-//     //   mockDb.organisation.update = () => Promise.resolve({ orgId: "org1", users: [{ id: "user1" }] });
+//     test("should add a user to an organisation", async () => {
+//       const userId = uuidv4();
+//       const orgId = uuidv4();
+//       mockDb.user.findUnique.mockResolvedValue({ id: userId } as User);
+//       mockDb.organisation.findUnique.mockResolvedValue({ orgId: orgId } as Organisation);
+//       mockDb.organisation.update.mockResolvedValue({ orgId: orgId, users: [{ id: userId }] } as Organisation);
 
-//     //   const result = await addUsersToOrg("org1", "user1");
+//       const result = await addUsersToOrg(orgId, userId);
 
-//     //   expect(result).toBeUndefined();
-//     // });
+//       expect(result).toBeUndefined();
+//     });
 
-//     // test("should return an error if user doesn't exist", async () => {
-//     //   mockDb.user.findUnique = () => Promise.resolve(null);
+//     test("should return an error if user doesn't exist", async () => {
+//       mockDb.user.findUnique.mockResolvedValue(null);
 
-//     //   const result = await addUsersToOrg("org1", "user1");
+//       const result = await addUsersToOrg(uuidv4(), uuidv4());
 
-//     //   console.log(
-//     //     {
-//     //         "result":result
-//     //     }
-//     //   )
+//       expect(result).toBeInstanceOf(ErrorMiddleware);
+//       expect((result as ErrorMiddleware).statusCode).toBe(401);
+//     });
 
-//     //   expect(result).toBeInstanceOf(ErrorMiddleware);
-//     //   expect((result as ErrorMiddleware).statusCode).toBe(401);
-//     // });
+//     test("should return an error if organisation doesn't exist", async () => {
+//       mockDb.user.findUnique.mockResolvedValue({ id: uuidv4() } as User);
+//       mockDb.organisation.findUnique.mockResolvedValue(null);
 
-//     // test("should return an error if organisation doesn't exist", async () => {
-//     //   mockDb.user.findUnique = () => Promise.resolve({ id: "user1" });
-//     //   mockDb.organisation.findUnique = () => Promise.resolve(null);
+//       const result = await addUsersToOrg(uuidv4(), uuidv4());
 
-//     //   const result = await addUsersToOrg("org1", "user1");
-
-//     //   expect(result).toBeInstanceOf(ErrorMiddleware);
-//     //   expect((result as ErrorMiddleware).statusCode).toBe(401);
-//     // });
-
-   
+//       expect(result).toBeInstanceOf(ErrorMiddleware);
+//       expect((result as ErrorMiddleware).statusCode).toBe(401);
+//     });
 //   });
 // });
